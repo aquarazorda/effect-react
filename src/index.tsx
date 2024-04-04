@@ -1,7 +1,7 @@
 import { renderToReadableStream } from "react-dom/server";
 import * as Http from "@effect/platform/HttpServer";
 import * as BunServer from "@effect/platform-bun/Http/Server";
-import { Layer, Effect, Stream, pipe, Chunk, flow, Logger } from "effect";
+import { Layer, Effect, Stream, pipe, flow, Cause } from "effect";
 import { BunRuntime } from "@effect/platform-bun";
 import { lazy } from "react";
 
@@ -35,16 +35,19 @@ const renderFromUrl = (response: Http.request.ServerRequest) =>
     const componentReadable = yield* _(
       pipe(
         Effect.tryPromise(() => renderToReadableStream(<Component />)),
+        Effect.catchAll(
+          flow(
+            Effect.tap(Effect.logError),
+            Effect.flatMap((e: string) => Effect.fail(new ReactError(e))),
+          ),
+        ),
         Effect.map((c) =>
           Stream.fromReadableStream(
             () => c,
             () => undefined,
           ),
         ),
-        Effect.flatMap(Effect.fromNullable),
-        Effect.mapError(
-          () => new ReactError("Route is not exporting default function."),
-        ),
+        Effect.catchAll(({ message }) => Http.response.text(message)),
       ),
     );
 
