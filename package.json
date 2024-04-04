@@ -1,0 +1,20 @@
+{
+  "name": "effect-react",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.24"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.48.24",
+    "@effect/platform-bun": "^0.32.37",
+    "effect": "^2.4.17",
+    "react": "^19.0.0-canary-7a2609eed-20240403",
+    "react-dom": "^19.0.0-canary-7a2609eed-20240403"
+  }
+}
